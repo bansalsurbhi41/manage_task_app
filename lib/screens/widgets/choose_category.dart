@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/task_manage/task_manage_bloc.dart';
 import '../../src/model/category_model.dart';
 import '../../utilities/colors.dart';
 
@@ -62,7 +60,6 @@ class ChooseCategory extends StatelessWidget {
                           child: category[index].icon,
                         ),
                       ),
-                      // SizedBox(height: 5,),
                       Text( category[index].name,
                         style: const TextStyle(
                             fontSize: 14,

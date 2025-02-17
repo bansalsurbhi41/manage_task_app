@@ -56,7 +56,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   child: GestureDetector(
     onTap: () => FocusScope.of(context).unfocus(),
     child: Padding(
-        padding:  EdgeInsets.only(left: 15, top: 0, right: 15, bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:  EdgeInsets.only(left: 15, top: 0, right: 15, bottom: MediaQuery.of(context).viewInsets.bottom	),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +153,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     BlocConsumer<TaskManageBloc, TaskManageState>(
                       listener: (context, state) {
                         if(state.addTaskStatus is StateLoaded){
-                          context.pop();
+                          context.pop(true);
                           state.addTaskStatus = const StateNotLoaded();
                         }
 

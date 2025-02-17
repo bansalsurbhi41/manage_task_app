@@ -74,157 +74,163 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const ShowErrorWidget()
           :  state.taskList.isEmpty
               ? const HomeEmptyScreen()
-              : ListView.builder(
-            itemCount: state.taskList.length,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              final task = state.taskList[index];
-              final CategoryModel categoryModel = category.where((element) => element.id == task.categoryId,).first;
-              final date = Utils.getDayText(task.date ?? '');
-              final time = Utils.formatTime(task.time ?? '');
-              return GestureDetector(
-                onTap: () async{
-                  bool? result = await context.push<bool>(MyAppRoute.taskDetailScreen, extra: TaskDetailScreenArgs(task: state.taskList[index]));
-                  if(result ?? false){
-                    context.read<TaskManageBloc>().add(const FetchTaskEvent());
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-                        child: Container(
-                          color: UIColors.tileColor,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: UIColors.purple,
-                                      width: 2,
+              : RefreshIndicator(
+            color: UIColors.purple,
+            onRefresh: () async{
+              context.read<TaskManageBloc>().add(const FetchTaskEvent());
+            },
+                child: ListView.builder(
+                            itemCount: state.taskList.length,
+                            physics: const BouncingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                final task = state.taskList[index];
+                final CategoryModel categoryModel = category.where((element) => element.id == task.categoryId,).first;
+                final date = Utils.getDayText(task.date ?? '');
+                final time = Utils.formatTime(task.time ?? '');
+                return GestureDetector(
+                  onTap: () async{
+                    bool? result = await context.push<bool>(MyAppRoute.taskDetailScreen, extra: TaskDetailScreenArgs(task: state.taskList[index]));
+                    if(result ?? false){
+                      context.read<TaskManageBloc>().add(const FetchTaskEvent());
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                          child: Container(
+                            color: UIColors.tileColor,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: UIColors.purple,
+                                        width: 2,
+                                      ),
+                                      borderRadius: const BorderRadius.all(Radius.circular(20.0)),
                                     ),
-                                    borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                                  ),
-                                  child:  Center(
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.flag_outlined,
-                                          color: Colors.white,
-                                          size: 12,
-                                        ),
-                                        // SizedBox(width: ,),
-                                        Text(
-                                          task.priority.toString(),
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                       Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                    child:  Center(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          SizedBox(
-                                            width: 130,
-                                            child: Text(
-                                              task.title ?? '',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.w400,
+                                          const Icon(
+                                            Icons.flag_outlined,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                          // SizedBox(width: ,),
+                                          Text(
+                                            task.priority.toString(),
+                                            style: const TextStyle(
                                                 color: Colors.white,
-                                              ),
-                                            ),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400),
                                           ),
                                         ],
                                       ),
-
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                           SizedBox(
-                                            width: 155,
-                                            child: Text(
-                                              '$date At $time',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                          ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(Radius.circular(4.0)),
-                                            child: Container(
-                                              color: categoryModel.color,
-                                              child:  Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 5, vertical: 2),
-                                                child: Row(
-                                                  children: [
-                                                    categoryModel.icon,
-                                                    Text(
-                                                      categoryModel.name,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w400,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                         Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              width: 130,
+                                              child: Text(
+                                                task.title ?? '',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ),
-                                          )
-                                        ],
-                                      )
-                                    ],
+                                          ],
+                                        ),
+
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                             SizedBox(
+                                              width: 155,
+                                              child: Text(
+                                                '$date At $time',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.all(Radius.circular(4.0)),
+                                              child: Container(
+                                                color: categoryModel.color,
+                                                child:  Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      horizontal: 5, vertical: 2),
+                                                  child: Row(
+                                                    children: [
+                                                      categoryModel.icon,
+                                                      Text(
+                                                        categoryModel.name,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w400,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      )
-                    ],
+                        const SizedBox(
+                          height: 20,
+                        )
+                      ],
+                    ),
                   ),
-                ),
+                );
+                            },
+                          ),
               );
-            },
-          );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
+        onPressed: () async{
+          bool? result = await showModalBottomSheet<bool>(
             context: context,
             backgroundColor: Colors.black,
             useSafeArea: true,
@@ -237,6 +243,10 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           );
+
+          if(result ?? false){
+            context.read<TaskManageBloc>().add(const FetchTaskEvent());
+          }
         },
         tooltip: 'Increment',
         backgroundColor: UIColors.purple,

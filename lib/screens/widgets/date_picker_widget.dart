@@ -26,8 +26,8 @@ class DatePickerWidget extends StatelessWidget {
 
   static Future<void>  displayDatePicker(BuildContext context) async {
     DateTime selected = DateTime.now();
-    DateTime initial = DateTime(2000);
-    DateTime last = DateTime(2025);
+    DateTime initial = DateTime.now();
+    DateTime last = DateTime(2027);
 
     var date = await showDatePicker(
       context: context,
